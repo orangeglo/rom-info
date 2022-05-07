@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Game Boy ROM Info Tool</title>
+    <script src="rom.js"></script>
+    <style>html { font-family: sans-serif; }</style>
+  </head>
+  <body>
+    <noscript>
+      Looks like you have JS disabled. This tool needs javascript to function!
+    </noscript>
+
+    <h1>Game Boy Rom Info Tool</h1>
+
+    <div style="margin-bottom: 2rem">
+      <div><label for="romFileInput" style="font-weight: bold;">Select ROM to View Info</label></div>
+      <input id="romFileInput" type="file" accept=".gb,.gbc">
+    </div>
+
+    <div id="info" style="visibility: hidden;">
+      <div style="font-weight: bold;">Header Information</div>
+      <ul>
+        <li>Name: <span id="rom-name"></span></li>
+        <li>Type: <span id="rom-type"></span></li>
+        <li>Color: <span id="rom-color"></span></li>
+        <li>ROM: <span id="rom-romsize"></span> KB</li>
+        <li>RAM: <span id="rom-ramsize"></span> KB</li>
+      </ul>
+    </div>
+
+    <script>
+      document.getElementById("romFileInput").addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        const fileReader = new FileReader();
+
+        // setup callback function once file has been read
+        fileReader.onload = () => {
+          const rom = new ROM(fileReader.result)
+          document.getElementById("rom-name").textContent = rom.title
+          document.getElementById("rom-type").textContent = rom.type
+          document.getElementById("rom-color").textContent = rom.cgb ? "Yes" : "No"
+          document.getElementById("rom-romsize").textContent = rom.romSizeKB()
+          document.getElementById("rom-ramsize").textContent = rom.ramSizeKB()
+
+          document.getElementById("info").style.visibility = "visible"
+        }
+
+        // start file read process
+        fileReader.readAsArrayBuffer(file)
+      }); 
+    </script>
+  </body>
+</html>
